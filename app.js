@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
 const pageRoute = require('./routes/pageRoute');
 const courseRoute = require('./routes/courseRoute');
 
 const app = express();
 //Connect DB
-await mongoose
+ mongoose
   .connect('mongodb://localhost/smartedu-db')
   .then(() => {
     console.log('Mongo DB Connected.');
@@ -18,6 +19,8 @@ app.set('view engine', 'ejs');
 
 //Mıddlewares
 app.use(express.static('public'));
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 //Routes
 
