@@ -19,12 +19,14 @@ exports.createUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email:email });
 
     if (user) {
       bcrypt.compare(password, user.password, (err, same) => {
         if (same) {
-          res.status(200).send('Başarılı Bir Şekilde Giriş Yaptınız');
+          //User Session
+          req.session.userID = user._id;
+          res.status(200).redirect("/");
         }
       });
     }
