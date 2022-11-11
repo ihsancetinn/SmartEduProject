@@ -13,7 +13,7 @@ exports.createCourse = async (req, res) => {
     req.flash('success', `${course.name} has been created succesfully`);
     res.status(201).redirect('/courses');
   } catch (error) {
-    req.flash('error', "Something happened!");
+    req.flash('error', 'Something happened!');
     res.status(400).redirect('/courses');
   }
 };
@@ -29,23 +29,23 @@ exports.getAllCourses = async (req, res) => {
 
     if (categorySlug) {
       filter = { category: category._id };
-    };
-    if(query) {
-      filter = {name:query}
+    }
+    if (query) {
+      filter = { name: query };
     }
 
-    if(!query && !categorySlug) {
-      filter.name = "",
-      filter.category = null
+    if (!query && !categorySlug) {
+      (filter.name = ''), (filter.category = null);
     }
-
 
     const courses = await Course.find({
-      $or:[
-        {name: { $regex: '.*' + filter.name + '.*', $options: 'i'}},
-        {category: filter.category}
-      ]
-    }).sort('-createdAt').populate('user');
+      $or: [
+        { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } },
+        { category: filter.category },
+      ],
+    })
+      .sort('-createdAt')
+      .populate('user');
     const categories = await Category.find();
 
     res.status(200).render('courses', {
@@ -109,11 +109,28 @@ exports.enrollCourse = async (req, res) => {
   }
 };
 exports.deleteCourse = async (req, res) => {
+  try {
+    const course = await Course.findOneAndRemove({ slug: req.params.slug });
+
+    req.flash('error', `${course.name} has been removed successfully`);
+
+    res.status(200).redirect('/users/dashboard');
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+exports.updateCourse = async (req, res) => {
   try {    
 
-    const course = await Course.findOneAndRemove({slug:req.params.slug})
+    const course = await Course.findOne({slug:req.params.slug});
+    course.name = req.body.name;
+    course.description = req.body.description;
+    course.category = req.body.category;
 
-    req.flash("error", `${course.name} has been removed successfully`);
+    course.save();
 
     res.status(200).redirect('/users/dashboard');
 
