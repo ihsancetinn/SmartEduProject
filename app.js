@@ -34,7 +34,7 @@ app.use(session({
     secret: 'my_keyboard_cat', // Buradaki texti değiştireceğiz.
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/smartedu-db' })
+    store: MongoStore.create({ mongoUrl: 'mongodb+srv://ihsan:505050@cluster0.5dqkvqy.mongodb.net/?retryWrites=true&w=majority' })
   })
 );
 app.use(flash());
